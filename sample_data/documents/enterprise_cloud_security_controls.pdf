@@ -1,0 +1,84 @@
+%PDF-1.3
+%‚„œ”
+1 0 obj
+<<
+/Producer (pypdf)
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Count 1
+/Kids [ 4 0 R ]
+>>
+endobj
+3 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+4 0 obj
+<<
+/Type /Page
+/Resources <<
+/Font <<
+/Helv <<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+>>
+>>
+/MediaBox [ 0.0 0.0 612 792 ]
+/Parent 2 0 R
+/Contents <<
+/Length 856
+>>
+stream
+BT
+/Helv 12 Tf
+50 720 Td
+14 TL
+(Enterprise Cloud Security Controls & Compliance Standard 2026) Tj
+T*
+(Document Reference: ISO-27001-SEC-2026) Tj
+T*
+(Section 1: Zero Trust Network Policies) Tj
+T*
+(All production Kubernetes clusters enforce default-deny ingress and egress policies.) Tj
+T*
+(Mutual TLS \(mTLS\) with cryptographic certificate rotation every 24 hours is mandatory.) Tj
+T*
+(Section 2: Privileged Access Management) Tj
+T*
+(Root accounts must remain locked. Hardware FIDO2 WebAuthn keys are mandatory for all admins.) Tj
+T*
+(Failed login threshold: 5 consecutive failed attempts trigger an automated account lockout.) Tj
+T*
+(Section 3: Database Encryption and Auditing) Tj
+T*
+(All data at rest is encrypted with AES-256 KMS Customer Managed Keys.) Tj
+T*
+(SQL injection detection filters must block UNION SELECT and xp_cmdshell patterns.) Tj
+T*
+ET
+endstream
+>>
+endobj
+xref
+0 5
+0000000000 65535 f 
+0000000015 00000 n 
+0000000054 00000 n 
+0000000113 00000 n 
+0000000162 00000 n 
+trailer
+<<
+/Size 5
+/Root 3 0 R
+/Info 1 0 R
+>>
+startxref
+1231
+%%EOF

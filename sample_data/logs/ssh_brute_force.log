@@ -1,0 +1,24 @@
+Mar 14 03:12:01 edge-gateway-01 sshd[14201]: Failed password for root from 198.51.100.42 port 48210 ssh2
+Mar 14 03:12:03 edge-gateway-01 sshd[14204]: Failed password for admin from 198.51.100.42 port 48214 ssh2
+Mar 14 03:12:06 edge-gateway-01 sshd[14209]: Failed password for ubuntu from 198.51.100.42 port 48220 ssh2
+Mar 14 03:12:09 edge-gateway-01 sshd[14215]: Failed password for test from 198.51.100.42 port 48226 ssh2
+Mar 14 03:12:12 edge-gateway-01 sshd[14221]: Failed password for deploy from 198.51.100.42 port 48232 ssh2
+Mar 14 03:12:15 edge-gateway-01 sshd[14228]: Failed password for oracle from 198.51.100.42 port 48238 ssh2
+Mar 14 03:12:18 edge-gateway-01 sshd[14234]: Failed password for postgres from 198.51.100.42 port 48244 ssh2
+Mar 14 03:12:21 edge-gateway-01 sshd[14240]: Failed password for user1 from 198.51.100.42 port 48250 ssh2
+Mar 14 03:12:24 edge-gateway-01 sshd[14247]: Failed password for backup from 198.51.100.42 port 48256 ssh2
+Mar 14 03:12:27 edge-gateway-01 sshd[14253]: Failed password for git from 198.51.100.42 port 48262 ssh2
+Mar 14 03:12:30 edge-gateway-01 sshd[14260]: Failed password for dev from 198.51.100.42 port 48268 ssh2
+Mar 14 03:12:33 edge-gateway-01 sshd[14266]: Failed password for svc_acc from 198.51.100.42 port 48274 ssh2
+Mar 14 03:12:36 edge-gateway-01 sshd[14272]: Failed password for webmaster from 198.51.100.42 port 48280 ssh2
+Mar 14 03:12:39 edge-gateway-01 sshd[14278]: Failed password for guest from 198.51.100.42 port 48286 ssh2
+Mar 14 03:12:42 edge-gateway-01 sshd[14285]: Failed password for sysadmin from 198.51.100.42 port 48292 ssh2
+Mar 14 03:12:45 edge-gateway-01 sshd[14291]: Failed password for operator from 198.51.100.42 port 48298 ssh2
+Mar 14 03:12:48 edge-gateway-01 sshd[14297]: Failed password for manager from 198.51.100.42 port 48304 ssh2
+Mar 14 03:12:51 edge-gateway-01 sshd[14303]: Failed password for testuser from 198.51.100.42 port 48310 ssh2
+Mar 14 03:12:54 edge-gateway-01 sshd[14310]: Failed password for support from 198.51.100.42 port 48316 ssh2
+Mar 14 03:12:57 edge-gateway-01 sshd[14316]: Failed password for developer from 198.51.100.42 port 48322 ssh2
+Mar 14 03:13:05 edge-gateway-01 sshd[14325]: Accepted password for deploy from 198.51.100.42 port 48330 ssh2
+Mar 14 03:13:06 edge-gateway-01 systemd-logind[980]: New session 394 of user deploy.
+Mar 14 03:13:12 edge-gateway-01 sudo[14339]: deploy : TTY=pts/2 ; PWD=/home/deploy ; USER=root ; COMMAND=/bin/bash
+Mar 14 03:13:12 edge-gateway-01 sudo[14339]: pam_unix(sudo:session): session opened for user root by deploy(uid=1001)

@@ -1,0 +1,78 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAJEXAMPLE123456",
+        "arn": "arn:aws:iam::123456789012:user/contractor-temp",
+        "accountId": "123456789012",
+        "userName": "contractor-temp"
+      },
+      "eventTime": "2026-03-14T15:20:10Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachUserPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.205",
+      "userAgent": "Boto3/1.26.15 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "contractor-temp",
+        "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+      },
+      "responseElements": null,
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "recipientAccountId": "123456789012"
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAJEXAMPLE123456",
+        "arn": "arn:aws:iam::123456789012:user/contractor-temp",
+        "accountId": "123456789012",
+        "userName": "contractor-temp"
+      },
+      "eventTime": "2026-03-14T15:21:44Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.205",
+      "userAgent": "Boto3/1.26.15 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "contractor-temp"
+      },
+      "responseElements": {
+        "accessKey": {
+          "userName": "contractor-temp",
+          "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+          "status": "Active"
+        }
+      },
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "recipientAccountId": "123456789012"
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAJEXAMPLE123456",
+        "arn": "arn:aws:iam::123456789012:user/contractor-temp",
+        "accountId": "123456789012",
+        "userName": "contractor-temp"
+      },
+      "eventTime": "2026-03-14T15:23:02Z",
+      "eventSource": "s3.amazonaws.com",
+      "eventName": "ListBuckets",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.205",
+      "userAgent": "aws-cli/2.11.1 Python/3.11.2",
+      "requestParameters": {},
+      "responseElements": null,
+      "readOnly": true,
+      "eventType": "AwsApiCall",
+      "recipientAccountId": "123456789012"
+    }
+  ]
+}

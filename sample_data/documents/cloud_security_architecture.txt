@@ -1,0 +1,38 @@
+# Enterprise Cloud Security Architecture & Perimeter Defense Specification
+Document ID: SEC-SPEC-2026-V3
+Classification: Internal / Confidential
+Author: Cloud Infrastructure & Cyber Defense Architecture Team
+
+## 1. Executive Summary & Perimeter Boundary
+This document outlines the security architecture for our multi-cloud deployment (AWS and Azure), detailing perimeter ingress points, identity verification boundaries, data encryption standards, and threat monitoring configurations. All workloads operating in the production environment must adhere to these baseline controls.
+
+## 2. Identity and Access Management (IAM) Controls
+- All production access requires hardware-backed Multi-Factor Authentication (FIDO2/WebAuthn).
+- Service accounts and machine-to-machine communications must utilize short-lived STS tokens with a maximum lifetime of 1 hour.
+- Root account usage is strictly prohibited; any API call made with root credentials triggers an automated P0 Security Incident Response workflow.
+- Critical IAM permissions (such as `iam:AttachRolePolicy`, `iam:CreateAccessKey`, `iam:PutUserPolicy`) are guarded by Service Control Policies (SCPs) that restrict execution to approved CI/CD pipelines.
+
+## 3. Network Architecture & Ingress Filtering
+- Public ingress is restricted exclusively to Layer 7 Web Application Firewalls (AWS WAF / Azure Front Door).
+- Direct SSH (port 22) and RDP (port 3389) exposure to the public internet is blocked at the subnet Network Access Control List (NACL) level.
+- Management access must be routed through an internal Bastion host with session recording and Just-In-Time (JIT) access approval.
+- Web Application Firewall rate-limiting rule: Any single IP address exceeding 100 requests per minute to `/api/v1/auth/*` endpoints must be blocked for 15 minutes.
+
+## 4. Web Application Security & Database Protection
+- Application services must run in isolated private subnets with no direct public route.
+- Database clusters (PostgreSQL, Redis) enforce TLS 1.3 encryption in transit and AES-256 encryption at rest using AWS KMS Customer Managed Keys (CMK).
+- Input parameterization is mandatory across all database query layers to prevent SQL Injection (SQLi) vulnerabilities.
+- Database access is audited; queries containing suspicious SQL keywords (`UNION SELECT`, `INFORMATION_SCHEMA`, `xp_cmdshell`, `SLEEP()`) trigger immediate Security Information and Event Management (SIEM) alerts.
+
+## 5. Security Incident Response & Log Forwarding
+- All host-level syslog, Windows Security Event logs (Event IDs 4624, 4625, 4672, 4720), and CloudTrail trails are streamed in real time to the central Security Operations Center (SOC) data lake.
+- Critical Alert Criteria:
+  1. Failed authentication threshold: > 10 failed login attempts from a single IP within 3 minutes.
+  2. Privilege Escalation: Any unauthorized group membership alteration or unexpected `sudo` execution.
+  3. C2 Beaconing: Outbound traffic on non-standard ports (e.g., 4444, 8888, 1337) to unclassified external IP addresses.
+  4. Port Scanning: Sequential SYN packets across > 50 ports within 10 seconds.
+
+## 6. Zero-Trust Segmentation & Compliance
+- Micro-segmentation is enforced via Kubernetes NetworkPolicies and AWS Security Groups using a default-deny ingress and egress posture.
+- Mutual TLS (mTLS) is enforced for all microservice-to-microservice traffic via the Istio service mesh.
+- Compliance baselines adhere to NIST SP 800-207, SOC 2 Type II, and ISO/IEC 27001:2022.

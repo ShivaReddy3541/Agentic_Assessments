@@ -1,0 +1,24 @@
+# Zero Trust Architecture & Phishing Defense Implementation Guide
+Document ID: ZTA-SEC-2026-DOC
+Classification: Technical Standard
+
+## 1. Zero Trust Core Principles
+Zero Trust operates on three core principles:
+1. Verify Explicitly: Always authenticate and authorize based on all available data points (identity, location, device health, service or workload, data classification, anomalies).
+2. Use Least Privilege Access: Limit user access with Just-In-Time (JIT) and Just-Enough-Access (JEA), risk-based adaptive policies, and data protection.
+3. Assume Breach: Minimize blast radius by segmenting access by network, user, devices, and application awareness. Encrypt all sessions end-to-end.
+
+## 2. Phishing and Credential Theft Mitigation Strategies
+Modern credential attacks frequently leverage Adversary-in-the-Middle (AiTM) reverse proxy frameworks (such as Evilginx3 and Modlishka) to bypass traditional SMS and OTP-based MFA by stealing session session tokens and cookies.
+Key Defenses:
+- Deploy FIDO2 WebAuthn / Passkeys: Cryptographically bound to the authentic origin domain, completely neutralizing AiTM phishing proxies.
+- Conditional Access & Device Compliance: Enforce device health attestation before granting token issuance.
+- Token Binding & Short Lifetimes: Bound session cookies to client TLS parameters and limit refresh token lifespan to 4 hours with continuous access evaluation (CAE).
+- Automated User Quarantine: When an impossible travel or unusual ASN authentication is detected, the user's active tokens are revoked automatically via API webhook.
+
+## 3. Incident Triage Workflow
+When a security alert is triggered:
+1. Containment Phase: Quarantine host from VPC, revoke active session cookies, disable compromised IAM access keys.
+2. Forensic Analysis: Cross-reference external threat intelligence (MITRE ATT&CK techniques, CVE indices) against internal proxy and firewall logs.
+3. Remediation: Patch root-cause software flaw, update WAF rules, rotate all secrets exposed during the session, and audit database access logs for data exfiltration indicators.
+4. Reporting: Compile an incident report detailing timeline, attack vectors, impacted assets, severity score, and preventive controls.

@@ -1,0 +1,6 @@
+Mar 14 08:14:10 srv-app-node01 auditd[1102]: type=SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=55d1a89f92e0 a1=55d1a89fa120 a2=55d1a89f8900 items=2 ppid=8921 pid=8924 auid=1003 uid=1003 gid=1003 euid=0 suid=0 fsuid=0 tty=pts1 ses=12 comm="pkexec" exe="/usr/bin/pkexec" key="priv_esc"
+Mar 14 08:14:10 srv-app-node01 auditd[1102]: type=EXECVE argc=3 a0="pkexec" a1="/bin/sh" a2="-c" a3="chmod u+s /bin/bash"
+Mar 14 08:14:12 srv-app-node01 kernel: [PRIV_ALERT] Process 8924 (pkexec) elevated effective UID from 1003 (developer) to 0 (root) using exploit CVE-2021-4034 PwnKit
+Mar 14 08:14:15 srv-app-node01 sudo[8935]: root : TTY=pts/1 ; PWD=/tmp/.cache ; USER=root ; COMMAND=/usr/sbin/useradd -m -s /bin/bash -p '$6$rounds=5000$saltsalt$h4ck3d...' backdoor_admin
+Mar 14 08:14:16 srv-app-node01 useradd[8936]: new user: name=backdoor_admin, UID=0, GID=0, home=/root, shell=/bin/bash
+Mar 14 08:14:18 srv-app-node01 sudo[8940]: root : TTY=pts/1 ; PWD=/tmp/.cache ; USER=root ; COMMAND=/bin/systemctl stop ufw
