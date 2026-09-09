@@ -1,0 +1,2562 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SKY Companion — Modern Vision & Conversational AI</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ----------------------------------------------------
+       MINIMALIST DESIGN TOKENS & MONOCHROMATIC PALETTE
+    ---------------------------------------------------- */
+    :root {
+      --bg-base: #090a0f;
+      --bg-card: #11131a;
+      --bg-card-subtle: #161922;
+      --bg-surface-glass: rgba(17, 19, 26, 0.78);
+      --bg-input: #0c0e14;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.18);
+      --border-focus: rgba(255, 255, 255, 0.35);
+
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-dim: #475569;
+
+      --accent-white: #ffffff;
+      --accent-silver: #e2e8f0;
+      --accent-surface: rgba(255, 255, 255, 0.06);
+      --accent-hover: rgba(255, 255, 255, 0.12);
+      --accent-active: rgba(255, 255, 255, 0.18);
+
+      --status-online: #10b981;
+      --status-busy: #f59e0b;
+      --status-offline: #ef4444;
+
+      --user-bubble: #1f2330;
+      --user-bubble-border: rgba(255, 255, 255, 0.12);
+      --bot-bubble: #141721;
+      --bot-bubble-border: rgba(255, 255, 255, 0.06);
+
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.65);
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.02) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.015) 0%, transparent 40%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* ----------------------------------------------------
+       LAYOUT STRUCTURE
+    ---------------------------------------------------- */
+    .app-viewport {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      width: 100%;
+      max-width: 1440px;
+      height: 92vh;
+      background: var(--bg-surface-glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ----------------------------------------------------
+       LEFT COLUMN: VISION AI & AVATAR COMPANION
+    ---------------------------------------------------- */
+    .studio-panel {
+      border-right: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .studio-panel::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .studio-panel::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    /* Avatar HUD Header */
+    .companion-hud {
+      padding: 18px 22px;
+      background: var(--bg-card-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .companion-hud-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #0d0f15;
+      border: 1.5px solid var(--border-subtle);
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+      flex-shrink: 0;
+    }
+
+    .avatar-wrapper:hover {
+      border-color: var(--border-focus);
+      transform: scale(1.05);
+    }
+
+    .avatar-wrapper canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .avatar-pulse-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .avatar-wrapper.speaking .avatar-pulse-ring {
+      opacity: 1;
+      animation: ringPulse 1.8s infinite;
+    }
+
+    @keyframes ringPulse {
+      0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+
+      50% {
+        transform: scale(1.15);
+        opacity: 0.2;
+      }
+
+      100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+    }
+
+    .companion-hud-meta h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sentiment-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      background: var(--accent-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .companion-hud-meta p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--status-online);
+      box-shadow: 0 0 8px var(--status-online);
+    }
+
+    .pulse-dot.offline {
+      background: var(--status-offline);
+      box-shadow: 0 0 8px var(--status-offline);
+    }
+
+    .companion-hud-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-icon-minimal {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-icon-minimal:hover {
+      background: var(--accent-surface);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    .btn-icon-minimal.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border-color: var(--border-focus);
+    }
+
+    /* Vision Studio Content */
+    .studio-content {
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      flex: 1;
+    }
+
+    .section-title {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Minimalist Dropzone */
+    .dropzone-box {
+      border: 1.5px dashed var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 24px 18px;
+      background: rgba(255, 255, 255, 0.015);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .dropzone-box:hover,
+    .dropzone-box.dragover {
+      border-color: var(--border-focus);
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateY(-1px);
+    }
+
+    .dropzone-icon {
+      width: 36px;
+      height: 36px;
+      color: var(--text-secondary);
+      transition: transform 0.25s;
+    }
+
+    .dropzone-box:hover .dropzone-icon {
+      transform: translateY(-3px);
+      color: var(--text-primary);
+    }
+
+    .dropzone-text {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .dropzone-subtext {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .dropzone-box input[type="file"] {
+      display: none;
+    }
+
+    /* Image Preview Widget */
+    .preview-card {
+      position: relative;
+      height: 180px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #08090d;
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      group: relative;
+    }
+
+    .preview-card img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: none;
+      transition: transform 0.3s;
+    }
+
+    .preview-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+    }
+
+    .preview-overlay-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: none;
+      gap: 6px;
+    }
+
+    .preview-card:hover .preview-overlay-actions {
+      display: flex;
+    }
+
+    /* Analysis Pipeline Progress */
+    .pipeline-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+    }
+
+    .pipeline-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .pipeline-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .pipeline-indicator.analyzing {
+      background: var(--status-busy);
+      animation: pingDot 1.2s infinite;
+    }
+
+    .pipeline-indicator.ready {
+      background: var(--status-online);
+    }
+
+    @keyframes pingDot {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.4);
+        opacity: 0.5;
+      }
+    }
+
+    /* Inspector Tabs: Insights vs Raw JSON */
+    .inspector-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 230px;
+    }
+
+    .inspector-tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-secondary);
+      background: var(--accent-surface);
+    }
+
+    .tab-btn.active {
+      color: var(--text-primary);
+      background: var(--accent-surface);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      padding-top: 10px;
+    }
+
+    .tab-pane.active {
+      display: flex;
+    }
+
+    /* Structured Insights View */
+    .insights-scroll {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-right: 4px;
+    }
+
+    .insights-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .insights-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .metric-pill {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+    }
+
+    .metric-pill-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .metric-pill-val {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .object-card {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      transition: border-color 0.2s;
+    }
+
+    .object-card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .object-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .object-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .object-category {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      background: var(--accent-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .object-desc {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* Palette Swatches */
+    .palette-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .color-swatch-chip {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--accent-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .color-swatch-chip:hover {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    /* Raw JSON View */
+    .json-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+
+    .json-filter-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      font-size: 0.74rem;
+      color: var(--text-primary);
+      width: 140px;
+      outline: none;
+    }
+
+    .json-filter-input:focus {
+      border-color: var(--border-focus);
+    }
+
+    .json-code-box {
+      flex: 1;
+      background: #07080c;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.5;
+      overflow-y: auto;
+      max-height: 220px;
+      color: #93c5fd;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .btn-action-minimal {
+      background: var(--accent-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-action-minimal:hover {
+      background: var(--accent-hover);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    /* ----------------------------------------------------
+       RIGHT COLUMN: CONVERSATIONAL AI & STREAMING CHAT
+    ---------------------------------------------------- */
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+      background: transparent;
+    }
+
+    /* Chat Header */
+    .chat-topbar {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-card-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .chat-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .system-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .system-version {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      background: var(--accent-surface);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .chat-topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-outline-minimal {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-outline-minimal:hover {
+      background: var(--accent-surface);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    /* Category Prompt Pills */
+    .prompt-pills-bar {
+      padding: 10px 28px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(17, 19, 26, 0.4);
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      flex-shrink: 0;
+    }
+
+    .prompt-pills-bar::-webkit-scrollbar {
+      height: 3px;
+    }
+
+    .prompt-pills-bar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .prompt-pill {
+      background: var(--accent-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.76rem;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .prompt-pill:hover {
+      background: var(--accent-hover);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Message Stream List */
+    .message-stream {
+      flex: 1;
+      min-height: 0;
+      padding: 28px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .message-stream::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .message-stream::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+    }
+
+    .message-group {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      animation: messageSlideIn 0.25s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message-group.user {
+      align-self: flex-end;
+      max-width: 78%;
+    }
+
+    .message-group.bot {
+      align-self: flex-start;
+      max-width: 84%;
+    }
+
+    .bubble-wrapper {
+      position: relative;
+    }
+
+    .message-bubble {
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      border-radius: var(--radius-md);
+      position: relative;
+    }
+
+    .message-group.user .message-bubble {
+      background: var(--user-bubble);
+      border: 1px solid var(--user-bubble-border);
+      color: var(--text-primary);
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-group.bot .message-bubble {
+      background: var(--bot-bubble);
+      border: 1px solid var(--bot-bubble-border);
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-bubble code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--accent-silver);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .message-bubble pre {
+      background: #08090d;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin: 8px 0;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+    }
+
+    .stream-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 14px;
+      background: var(--text-primary);
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: blinkCursor 0.9s infinite;
+    }
+
+    @keyframes blinkCursor {
+
+      0%,
+      50% {
+        opacity: 1;
+      }
+
+      51%,
+      100% {
+        opacity: 0;
+      }
+    }
+
+    /* Message Action Toolbar (Hover) */
+    .bubble-actions {
+      position: absolute;
+      bottom: -28px;
+      display: none;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 2px 6px;
+      box-shadow: var(--shadow-sm);
+      z-index: 10;
+    }
+
+    .message-group.user .bubble-actions {
+      right: 0;
+    }
+
+    .message-group.bot .bubble-actions {
+      left: 0;
+    }
+
+    .bubble-wrapper:hover .bubble-actions {
+      display: flex;
+    }
+
+    .bubble-action-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 3px 5px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .bubble-action-btn:hover {
+      color: var(--text-primary);
+      background: var(--accent-surface);
+    }
+
+    .message-time {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      padding: 0 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Input Dock Area */
+    .chat-dock {
+      padding: 18px 28px;
+      background: var(--bg-card-subtle);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .dock-input-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      transition: all 0.2s;
+    }
+
+    .dock-input-bar:focus-within {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+    }
+
+    .dock-input-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-size: 0.92rem;
+      padding: 10px 4px;
+      outline: none;
+    }
+
+    .dock-input-bar input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .btn-dock-send {
+      background: var(--accent-white);
+      color: #000;
+      border: none;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-dock-send:hover:not(:disabled) {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+
+    .btn-dock-send:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .dock-hints {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      padding: 0 4px;
+    }
+
+    .dock-hints kbd {
+      background: var(--accent-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    /* Modal / Lightbox for Image Zoom */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .lightbox-modal.active {
+      display: flex;
+    }
+
+    .lightbox-content {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-lg);
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 24px;
+      right: 28px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-subtle);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: background 0.2s;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 1024px) {
+      .app-viewport {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: 96vh;
+      }
+
+      .studio-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+
+      .message-stream {
+        min-height: 450px;
+      }
+    }
+
+    /* ----------------------------------------------------
+       BOTTOM JADE ANIMATION STAGE & WALKER
+    ---------------------------------------------------- */
+    .jade-bottom-stage {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 260px;
+      pointer-events: none;
+      z-index: 99;
+      overflow: hidden;
+    }
+
+    .jade-walker {
+      position: absolute;
+      bottom: 8px;
+      left: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      pointer-events: auto;
+      cursor: pointer;
+      user-select: none;
+      z-index: 100;
+      filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.85));
+      transition: filter 0.25s ease;
+      will-change: left;
+    }
+
+    .jade-walker:hover {
+      filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.28));
+    }
+
+    .jade-walker-bubble {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: rgba(14, 16, 23, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-hover);
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 8px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+      white-space: nowrap;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .jade-walker-img {
+      height: 230px;
+      width: auto;
+      max-width: 170px;
+      object-fit: contain;
+      display: block;
+      pointer-events: auto;
+      transition: transform 0.15s ease;
+    }
+
+    .stage-control-pill {
+      position: absolute;
+      bottom: 12px;
+      right: 18px;
+      pointer-events: auto;
+      z-index: 101;
+    }
+
+    .stage-pill-btn {
+      background: rgba(17, 19, 26, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .stage-pill-btn:hover {
+      background: var(--accent-surface);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    .stage-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--status-online);
+      box-shadow: 0 0 6px var(--status-online);
+    }
+
+    .stage-dot.paused {
+      background: var(--text-muted);
+      box-shadow: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-viewport">
+    <!-- ========================================================
+         LEFT STUDIO PANEL: JADE AVATAR HUD & VISION MODEL STUDIO
+    ======================================================== -->
+    <aside class="studio-panel">
+      <!-- Interactive Jade Companion HUD -->
+      <div class="companion-hud">
+        <div class="companion-hud-left">
+          <div class="avatar-wrapper" id="avatarBox" title="Click to interact with Jade">
+            <canvas id="avatarCanvas" width="112" height="112"></canvas>
+            <div class="avatar-pulse-ring"></div>
+          </div>
+          <div class="companion-hud-meta">
+            <h2>
+              <span>Jade Companion</span>
+              <span class="sentiment-badge" id="sentimentBadge">Neutral</span>
+            </h2>
+            <p>
+              <span class="pulse-dot" id="serverStatusDot"></span>
+              <span id="serverStatusText">Connecting...</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="companion-hud-actions">
+          <button class="btn-icon-minimal active" id="ttsToggleBtn" title="Toggle Voice / Read Aloud">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Vision AI Section -->
+      <div class="studio-content">
+        <div class="section-title">
+          <span>Vision Inspector</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--text-dim);">Model:
+            MiniCPM-V</span>
+        </div>
+
+        <!-- File Upload Zone -->
+        <label class="dropzone-box" id="dropZone">
+          <svg class="dropzone-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <div class="dropzone-text">Drop image or click to browse</div>
+          <div class="dropzone-subtext">JPG, PNG, WEBP supported • Up to 20MB</div>
+          <input type="file" id="imageFileInput" accept="image/*" />
+        </label>
+
+        <!-- Preview Card -->
+        <div class="preview-card" id="previewCard">
+          <img id="imagePreviewImg" alt="Visual Subject" />
+          <div class="preview-empty" id="previewPlaceholder">
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="opacity: 0.4;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+            </svg>
+            <span>No image loaded</span>
+          </div>
+          <div class="preview-overlay-actions">
+            <button class="btn-action-minimal" id="zoomImageBtn" title="Zoom image">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+              </svg>
+            </button>
+            <button class="btn-action-minimal" id="clearImageBtn" title="Clear image">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Pipeline Status Banner -->
+        <div class="pipeline-status">
+          <div class="pipeline-left">
+            <span class="pipeline-indicator" id="pipelineDot"></span>
+            <span id="pipelineText">Awaiting visual input</span>
+          </div>
+          <button class="btn-action-minimal" id="quickAnalyzeBtn" style="display: none;">Re-analyze</button>
+        </div>
+
+        <!-- Inspector Tabs: Structured Insights vs Raw JSON -->
+        <div class="inspector-container">
+          <div class="inspector-tabs">
+            <button class="tab-btn active" data-tab="insights">Structured Insights</button>
+            <button class="tab-btn" data-tab="json">Raw image_out.json</button>
+          </div>
+
+          <!-- Tab 1: Structured Insights -->
+          <div class="tab-pane active" id="paneInsights">
+            <div class="insights-scroll" id="insightsContent">
+              <div class="metric-grid">
+                <div class="metric-pill">
+                  <div class="metric-pill-label">Dimensions</div>
+                  <div class="metric-pill-val" id="valDimensions">—</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-pill-label">Orientation</div>
+                  <div class="metric-pill-val" id="valOrientation">—</div>
+                </div>
+              </div>
+
+              <div>
+                <div class="metric-pill-label" style="margin-bottom: 4px;">Identified Palette</div>
+                <div class="palette-row" id="paletteList">
+                  <span style="font-size: 0.74rem; color: var(--text-dim);">No colors sampled yet</span>
+                </div>
+              </div>
+
+              <div>
+                <div class="metric-pill-label" style="margin-bottom: 6px;">Visual Elements Breakdown</div>
+                <div id="objectsList" style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="font-size: 0.75rem; color: var(--text-dim); padding: 8px 0;">Upload an image to inspect
+                    objects, textures, and characteristics.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Raw JSON -->
+          <div class="tab-pane" id="paneJson">
+            <div class="json-toolbar">
+              <input type="text" class="json-filter-input" id="jsonFilter" placeholder="Filter keys..." />
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-action-minimal" id="copyJsonBtn">Copy</button>
+                <button class="btn-action-minimal" id="downloadJsonBtn">Export</button>
+              </div>
+            </div>
+            <pre class="json-code-box" id="jsonCodeBox">// Context from image_out.json will render here...</pre>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========================================================
+         RIGHT CONVERSATIONAL PANEL: CHAT & SSE STREAM
+    ======================================================== -->
+    <main class="chat-panel">
+      <!-- Topbar -->
+      <header class="chat-topbar">
+        <div class="chat-topbar-left">
+          <div class="system-title">SKY Conversational Hub</div>
+          <div class="system-version" id="sessionIdBadge" title="Session Thread ID">session-ready</div>
+        </div>
+
+        <div class="chat-topbar-right">
+          <button class="btn-outline-minimal" id="newThreadBtn" title="Start a fresh conversation thread">
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>New Chat</span>
+          </button>
+          <button class="btn-outline-minimal" id="exportChatBtn" title="Export conversation history">
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            <span>Export</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Category Suggestions Bar -->
+      <div class="prompt-pills-bar">
+        <button class="prompt-pill"
+          onclick="sendSuggestion('Tell me something fascinating about science or technology today.')">
+          💡 Curiosity
+        </button>
+        <button class="prompt-pill"
+          onclick="sendSuggestion('Can you help me brainstorm creative ideas for a new project?')">
+          ✨ Brainstorming
+        </button>
+        <button class="prompt-pill"
+          onclick="sendSuggestion('What are some effective habits to improve daily focus and mindset?')">
+          🌱 Mindset & Growth
+        </button>
+        <button class="prompt-pill"
+          onclick="sendSuggestion('Let’s have a fun conversation! What are your favorite things to explore?')">
+          💬 Casual Chat
+        </button>
+      </div>
+
+      <!-- Messages Stream Viewport -->
+      <div class="message-stream" id="messageStream">
+        <div class="message-group bot">
+          <div class="bubble-wrapper">
+            <div class="message-bubble">
+              Welcome to <strong>SKY Companion</strong>. I am Jade, your friendly conversational AI companion. Feel free to discuss any topic you like, brainstorm ideas, ask questions, or explore new interests together!
+            </div>
+            <div class="bubble-actions">
+              <button class="bubble-action-btn" onclick="copyBubbleText(this)" title="Copy text">
+                <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </button>
+              <button class="bubble-action-btn" onclick="speakBubbleText(this)" title="Listen">
+                <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                </svg>
+              </button>
+              <span class="message-time">Ready</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Dock -->
+      <div class="chat-dock">
+        <div class="dock-input-bar">
+          <input type="text" id="chatInput" placeholder="Type your message, explore image details, or ask a question..."
+            autocomplete="off" />
+          <button class="btn-icon-minimal" id="voiceInputBtn" title="Voice Input (Speech-to-text)">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+          </button>
+          <button class="btn-dock-send" id="sendBtn">
+            <span>Send</span>
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </div>
+        <div class="dock-hints">
+          <span>Press <kbd>Enter</kbd> to send • <kbd>Ctrl</kbd> + <kbd>K</kbd> to focus input</span>
+          <span id="typingIndicator" style="display: none; color: var(--text-secondary);">Jade is composing...</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Zoom Lightbox Modal -->
+  <div class="lightbox-modal" id="lightboxModal">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <img class="lightbox-content" id="lightboxImg" alt="Full Image View" />
+  </div>
+
+  <!-- ========================================================
+       BOTTOM JADE ANIMATION COMPONENT (WALKER & INTERACTIVE STAGE)
+  ======================================================== -->
+  <div class="jade-bottom-stage" id="jadeBottomStage">
+    <div class="jade-walker" id="jadeWalker" title="Click to interact with Jade">
+      <div class="jade-walker-bubble" id="jadeWalkerBubble">
+        <span class="stage-dot"></span>
+        <span id="jadeWalkerBubbleText">Jade • Ready</span>
+      </div>
+      <img id="jadeWalkerImg" class="jade-walker-img" src="jade_animations/main.png" alt="Jade Companion" />
+    </div>
+
+    <!-- Stage Control Pill -->
+    <div class="stage-control-pill">
+      <button class="stage-pill-btn" id="stageToggleBtn" title="Toggle Jade Companion Floor">
+        <span class="stage-dot" id="stagePillDot"></span>
+        <span id="stageToggleLabel">Companion Floor: Active</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       APPLICATION LOGIC & COMPANION CONTROLLER
+  ======================================================== -->
+  <script>
+    // --- Config & State ---
+    const API_BASE = "http://localhost:8000";
+    let isTtsEnabled = true;
+    let currentAnalysisJSON = null;
+    let isStreaming = false;
+
+    function generateSessionId() {
+      return "sess_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 6);
+    }
+    let currentSessionId = generateSessionId();
+
+    // --- DOM Elements ---
+    const avatarCanvas = document.getElementById('avatarCanvas');
+    const avatarBox = document.getElementById('avatarBox');
+    const sentimentBadge = document.getElementById('sentimentBadge');
+    const serverStatusDot = document.getElementById('serverStatusDot');
+    const serverStatusText = document.getElementById('serverStatusText');
+    const ttsToggleBtn = document.getElementById('ttsToggleBtn');
+
+    const dropZone = document.getElementById('dropZone');
+    const imageFileInput = document.getElementById('imageFileInput');
+    const imagePreviewImg = document.getElementById('imagePreviewImg');
+    const previewPlaceholder = document.getElementById('previewPlaceholder');
+    const zoomImageBtn = document.getElementById('zoomImageBtn');
+    const clearImageBtn = document.getElementById('clearImageBtn');
+    const pipelineDot = document.getElementById('pipelineDot');
+    const pipelineText = document.getElementById('pipelineText');
+    const quickAnalyzeBtn = document.getElementById('quickAnalyzeBtn');
+
+    const paneInsights = document.getElementById('paneInsights');
+    const paneJson = document.getElementById('paneJson');
+    const valDimensions = document.getElementById('valDimensions');
+    const valOrientation = document.getElementById('valOrientation');
+    const paletteList = document.getElementById('paletteList');
+    const objectsList = document.getElementById('objectsList');
+    const jsonFilter = document.getElementById('jsonFilter');
+    const jsonCodeBox = document.getElementById('jsonCodeBox');
+    const copyJsonBtn = document.getElementById('copyJsonBtn');
+    const downloadJsonBtn = document.getElementById('downloadJsonBtn');
+
+    const sessionIdBadge = document.getElementById('sessionIdBadge');
+    const newThreadBtn = document.getElementById('newThreadBtn');
+    const exportChatBtn = document.getElementById('exportChatBtn');
+    const messageStream = document.getElementById('messageStream');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const voiceInputBtn = document.getElementById('voiceInputBtn');
+    const typingIndicator = document.getElementById('typingIndicator');
+
+    const lightboxModal = document.getElementById('lightboxModal');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+
+    sessionIdBadge.textContent = currentSessionId.substring(0, 14);
+
+    // ========================================================
+    // 1. JADE AVATAR ANIMATION ENGINE (Frame-by-frame)
+    // ========================================================
+    const avatarCtx = avatarCanvas.getContext('2d');
+    const animations = {
+      smile: { count: 35, path: 'jade_animations/smile', frames: [] },
+      left: { count: 28, path: 'jade_animations/left', frames: [] },
+      right: { count: 28, path: 'jade_animations/right', frames: [] }
+    };
+
+    let currentAnim = 'smile';
+    let currentFrameIndex = 0;
+    let animTimer = null;
+    let isPlayingOneShot = false;
+
+    // Draw initial placeholder while animation frames load
+    function drawAvatarPlaceholder() {
+      avatarCtx.clearRect(0, 0, avatarCanvas.width, avatarCanvas.height);
+      avatarCtx.fillStyle = "#151821";
+      avatarCtx.beginPath();
+      avatarCtx.arc(avatarCanvas.width / 2, avatarCanvas.height / 2, avatarCanvas.width / 2 - 2, 0, Math.PI * 2);
+      avatarCtx.fill();
+      avatarCtx.strokeStyle = "rgba(255, 255, 255, 0.12)";
+      avatarCtx.lineWidth = 1.5;
+      avatarCtx.stroke();
+
+      avatarCtx.fillStyle = "#ffffff";
+      avatarCtx.beginPath();
+      avatarCtx.arc(avatarCanvas.width / 2 - 12, avatarCanvas.height / 2 - 4, 3, 0, Math.PI * 2);
+      avatarCtx.arc(avatarCanvas.width / 2 + 12, avatarCanvas.height / 2 - 4, 3, 0, Math.PI * 2);
+      avatarCtx.fill();
+
+      avatarCtx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+      avatarCtx.lineWidth = 2;
+      avatarCtx.beginPath();
+      avatarCtx.arc(avatarCanvas.width / 2, avatarCanvas.height / 2 + 4, 10, 0.15 * Math.PI, 0.85 * Math.PI, false);
+      avatarCtx.stroke();
+    }
+    drawAvatarPlaceholder();
+
+    // Preload image frames for ultra-smooth rendering
+    function preloadAnimationFrames() {
+      for (const [key, anim] of Object.entries(animations)) {
+        for (let i = 1; i <= anim.count; i++) {
+          const numStr = String(i).padStart(3, '0');
+          const img = new Image();
+          img.src = `${anim.path}/ezgif-frame-${numStr}-removebg-preview.png`;
+          if (i === 1 && key === 'smile') {
+            img.onload = () => renderCurrentFrame();
+          }
+          anim.frames.push(img);
+        }
+      }
+    }
+    preloadAnimationFrames();
+
+    function renderCurrentFrame() {
+      const anim = animations[currentAnim];
+      if (!anim || !anim.frames[currentFrameIndex]) return;
+      const img = anim.frames[currentFrameIndex];
+      if (img.complete && img.naturalWidth > 0) {
+        avatarCtx.clearRect(0, 0, avatarCanvas.width, avatarCanvas.height);
+        avatarCtx.drawImage(img, 0, 0, avatarCanvas.width, avatarCanvas.height);
+      }
+    }
+
+    function startAvatarLoop() {
+      if (animTimer) clearInterval(animTimer);
+      animTimer = setInterval(() => {
+        const anim = animations[currentAnim];
+        currentFrameIndex++;
+        if (currentFrameIndex >= anim.count) {
+          if (isPlayingOneShot) {
+            isPlayingOneShot = false;
+            currentAnim = 'smile';
+            currentFrameIndex = 0;
+          } else {
+            currentFrameIndex = 0;
+          }
+        }
+        renderCurrentFrame();
+      }, 125); // ~8 FPS for calm, gentle pacing
+    }
+
+    function triggerAvatarReaction(animName) {
+      if (animations[animName]) {
+        currentAnim = animName;
+        currentFrameIndex = 0;
+        isPlayingOneShot = true;
+      }
+    }
+
+    avatarBox.addEventListener('click', () => {
+      triggerAvatarReaction('smile');
+      speakText("Hello! I am ready to help you with visual analysis or chat.");
+    });
+
+    avatarBox.addEventListener('mouseenter', () => {
+      if (!isPlayingOneShot) {
+        triggerAvatarReaction(Math.random() > 0.5 ? 'left' : 'right');
+      }
+    });
+
+    startAvatarLoop();
+
+    // ========================================================
+    // 2. BACKEND HEALTH & TTS
+    // ========================================================
+    async function checkBackendConnection() {
+      try {
+        const res = await fetch(`${API_BASE}/docs`, { method: "GET", mode: "no-cors" });
+        serverStatusDot.className = "pulse-dot";
+        serverStatusText.textContent = "Backend Active (Local:8000)";
+      } catch (err) {
+        serverStatusDot.className = "pulse-dot offline";
+        serverStatusText.textContent = "Offline Fallback Mode";
+      }
+    }
+    checkBackendConnection();
+    setInterval(checkBackendConnection, 15000);
+
+    ttsToggleBtn.addEventListener('click', () => {
+      isTtsEnabled = !isTtsEnabled;
+      ttsToggleBtn.classList.toggle('active', isTtsEnabled);
+    });
+
+    function speakText(text) {
+      if (!isTtsEnabled || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const clean = text.replace(/<[^>]*>/g, '').replace(/[\*\_`#]/g, '');
+      const utterance = new SpeechSynthesisUtterance(clean.substring(0, 220));
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+      avatarBox.classList.add('speaking');
+      utterance.onend = () => avatarBox.classList.remove('speaking');
+      utterance.onerror = () => avatarBox.classList.remove('speaking');
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // ========================================================
+    // 3. IMAGE UPLOAD & VISION ANALYSIS
+    // ========================================================
+    ['dragenter', 'dragover'].forEach(name => {
+      dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(name => {
+      dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+    });
+    dropZone.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files && files[0]) processSelectedImage(files[0]);
+    });
+
+    imageFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) processSelectedImage(e.target.files[0]);
+    });
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+      });
+    }
+
+    async function processSelectedImage(file) {
+      if (!file) return;
+
+      const base64Url = await fileToBase64(file);
+      imagePreviewImg.src = base64Url;
+      imagePreviewImg.style.display = 'block';
+      previewPlaceholder.style.display = 'none';
+
+      // Update UI to analyzing state
+      pipelineDot.className = "pipeline-indicator analyzing";
+      pipelineText.textContent = `Analyzing ${file.name.substring(0, 16)}...`;
+      triggerAvatarReaction('left');
+
+      try {
+        const response = await fetch(`${API_BASE}/api/analyze-image`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: base64Url,
+            image_identifier: file.name,
+            prompt: "Provide a comprehensive, detailed inspection report on any object present in this image (regardless of object type). Include object identification, category, key visual features, materials, color palette, condition, and detailed characteristics."
+          })
+        });
+
+        if (response.ok) {
+          const resData = await response.json();
+          currentAnalysisJSON = resData.output_json || {
+            status: "success",
+            timestamp: new Date().toISOString(),
+            analysis_id: resData.analysis_id,
+            image_identifier: resData.image_identifier || file.name,
+            analysis_result: resData.analysis
+          };
+        } else {
+          throw new Error(`Server status ${response.status}`);
+        }
+      } catch (err) {
+        console.warn("Backend unavailable, executing fallback vision engine:", err);
+        currentAnalysisJSON = await runClientVisionEngine(file);
+      }
+
+      // Update UI to complete
+      pipelineDot.className = "pipeline-indicator ready";
+      pipelineText.textContent = "Analysis complete • Ready";
+      quickAnalyzeBtn.style.display = "inline-flex";
+
+      // Render structured insights & JSON
+      renderInspectionReport(currentAnalysisJSON);
+      downloadJSON(currentAnalysisJSON, 'image_out.json');
+
+      triggerAvatarReaction('smile');
+    }
+
+    // Client-side HTML5 Canvas Fallback Vision Engine
+    async function runClientVisionEngine(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const width = img.width;
+            const height = img.height;
+            const aspect = (width / height).toFixed(2);
+            let orientation = "Square / Symmetric Aspect Ratio";
+            if (width / height > 1.25) orientation = "Landscape Orientation";
+            else if (width / height < 0.8) orientation = "Portrait Orientation";
+
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.min(width, 120);
+            canvas.height = Math.min(height, 120);
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imgData.data;
+            let rSum = 0, gSum = 0, bSum = 0;
+            const totalPixels = pixels.length / 4;
+            const colorCounts = {};
+
+            for (let i = 0; i < pixels.length; i += 4) {
+              const r = pixels[i];
+              const g = pixels[i + 1];
+              const b = pixels[i + 2];
+              rSum += r; gSum += g; bSum += b;
+
+              const binR = Math.floor(r / 35) * 35;
+              const binG = Math.floor(g / 35) * 35;
+              const binB = Math.floor(b / 35) * 35;
+              const key = `${binR},${binG},${binB}`;
+              colorCounts[key] = (colorCounts[key] || 0) + 1;
+            }
+
+            const avgR = Math.round(rSum / totalPixels);
+            const avgG = Math.round(gSum / totalPixels);
+            const avgB = Math.round(bSum / totalPixels);
+            const brightness = Math.round((avgR * 299 + avgG * 587 + avgB * 114) / 1000);
+
+            let lightingDesc = "Balanced Neutral Lighting";
+            if (brightness < 80) lightingDesc = "Low-key / Deep Tones";
+            else if (brightness > 175) lightingDesc = "High-key / Bright Illumination";
+
+            function getNamedColor(r, g, b) {
+              if (r < 40 && g < 40 && b < 40) return "Charcoal Black";
+              if (r > 215 && g > 215 && b > 215) return "Crisp White";
+              if (Math.abs(r - g) < 20 && Math.abs(g - b) < 20) return "Neutral Slate";
+              if (r > g + 40 && r > b + 40) return "Crimson Red";
+              if (g > r + 30 && g > b + 30) return "Emerald Green";
+              if (b > r + 30 && b > g + 30) return "Cobalt Blue";
+              return `Accent (RGB ${r},${g},${b})`;
+            }
+
+            const topColors = Object.entries(colorCounts)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 3)
+              .map(([k, count]) => {
+                const [cr, cg, cb] = k.split(',').map(Number);
+                const pct = Math.round((count / totalPixels) * 100);
+                return `${getNamedColor(cr, cg, cb)} (${pct}%)`;
+              }).join(', ');
+
+            const report = `Visual Inspection for '${file.name}':\n- Geometry: ${width}x${height} px (${orientation}, Aspect Ratio: ${aspect})\n- Lighting: ${lightingDesc} (Luminance: ${brightness}/255)\n- Primary Palette: ${topColors}\n- Subject Characteristics: Structural features and visual components captured.`;
+
+            resolve({
+              status: "success",
+              timestamp: new Date().toISOString(),
+              analysis_id: Date.now().toString().slice(-6),
+              image_identifier: file.name,
+              prompt: "Detailed visual analysis",
+              analysis_result: report,
+              visual_metrics: {
+                dimensions: `${width}x${height}`,
+                orientation: orientation,
+                dominant_colors: topColors,
+                brightness: brightness
+              }
+            });
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Render structured insights into Tab 1
+    function renderInspectionReport(data) {
+      if (!data) return;
+
+      // Dimensions & Orientation
+      if (data.visual_metrics) {
+        valDimensions.textContent = data.visual_metrics.dimensions || '—';
+        valOrientation.textContent = data.visual_metrics.orientation || '—';
+      }
+
+      // Palette swatches
+      paletteList.innerHTML = '';
+      const colors = data.visual_metrics?.dominant_colors || '';
+      if (colors) {
+        colors.split(',').forEach(c => {
+          const chip = document.createElement('span');
+          chip.className = 'color-swatch-chip';
+          chip.textContent = c.trim();
+          chip.title = c.trim();
+          paletteList.appendChild(chip);
+        });
+      } else {
+        paletteList.innerHTML = '<span style="font-size: 0.74rem; color: var(--text-dim);">No sampled palette</span>';
+      }
+
+      // Parse objects from markdown analysis_result
+      objectsList.innerHTML = '';
+      const reportText = data.analysis_result || data.description || '';
+      const sections = reportText.split(/####\s+/).filter(s => s.trim().length > 0);
+
+      if (sections.length > 1) {
+        sections.slice(1, 6).forEach(sec => {
+          const lines = sec.split('\n');
+          const title = lines[0]?.trim() || 'Detected Object';
+          const details = lines.slice(1).join(' ').replace(/\*\*/g, '').substring(0, 140) + '...';
+
+          const card = document.createElement('div');
+          card.className = 'object-card';
+          card.innerHTML = `
+            <div class="object-card-header">
+              <span class="object-name">${title}</span>
+              <span class="object-category">Identified</span>
+            </div>
+            <div class="object-desc">${details}</div>
+          `;
+          objectsList.appendChild(card);
+        });
+      } else {
+        const fallbackCard = document.createElement('div');
+        fallbackCard.className = 'object-card';
+        fallbackCard.innerHTML = `
+          <div class="object-card-header"><span class="object-name">Visual Analysis</span></div>
+          <div class="object-desc">${reportText.substring(0, 240)}...</div>
+        `;
+        objectsList.appendChild(fallbackCard);
+      }
+
+      // Update Raw JSON View
+      jsonCodeBox.textContent = JSON.stringify(data, null, 2);
+    }
+
+    // Tab Switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.getAttribute('data-tab');
+        if (tab === 'insights') paneInsights.classList.add('active');
+        if (tab === 'json') paneJson.classList.add('active');
+      });
+    });
+
+    // JSON Filter
+    jsonFilter.addEventListener('input', (e) => {
+      if (!currentAnalysisJSON) return;
+      const query = e.target.value.toLowerCase().trim();
+      if (!query) {
+        jsonCodeBox.textContent = JSON.stringify(currentAnalysisJSON, null, 2);
+        return;
+      }
+      const filtered = {};
+      for (const [k, v] of Object.entries(currentAnalysisJSON)) {
+        if (k.toLowerCase().includes(query) || JSON.stringify(v).toLowerCase().includes(query)) {
+          filtered[k] = v;
+        }
+      }
+      jsonCodeBox.textContent = JSON.stringify(filtered, null, 2);
+    });
+
+    // Copy JSON
+    copyJsonBtn.addEventListener('click', () => {
+      if (currentAnalysisJSON) {
+        navigator.clipboard.writeText(JSON.stringify(currentAnalysisJSON, null, 2));
+        copyJsonBtn.textContent = "Copied!";
+        setTimeout(() => copyJsonBtn.textContent = "Copy", 1800);
+      }
+    });
+
+    // Download JSON
+    function downloadJSON(data, filename) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    downloadJsonBtn.addEventListener('click', () => {
+      if (currentAnalysisJSON) downloadJSON(currentAnalysisJSON, 'image_out.json');
+    });
+
+    // Lightbox Modal
+    zoomImageBtn.addEventListener('click', () => {
+      if (imagePreviewImg.src && imagePreviewImg.style.display !== 'none') {
+        lightboxImg.src = imagePreviewImg.src;
+        lightboxModal.classList.add('active');
+      }
+    });
+    lightboxClose.addEventListener('click', () => lightboxModal.classList.remove('active'));
+    lightboxModal.addEventListener('click', (e) => {
+      if (e.target === lightboxModal) lightboxModal.classList.remove('active');
+    });
+
+    clearImageBtn.addEventListener('click', () => {
+      imagePreviewImg.src = '';
+      imagePreviewImg.style.display = 'none';
+      previewPlaceholder.style.display = 'flex';
+      imageFileInput.value = '';
+      pipelineDot.className = 'pipeline-indicator';
+      pipelineText.textContent = 'Awaiting visual input';
+      quickAnalyzeBtn.style.display = 'none';
+    });
+
+    // ========================================================
+    // 4. CHAT CONTROLLER & SSE STREAMING ENGINE
+    // ========================================================
+    function appendUserMessage(text) {
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const group = document.createElement('div');
+      group.className = 'message-group user';
+      group.innerHTML = `
+        <div class="bubble-wrapper">
+          <div class="message-bubble">${escapeHtml(text)}</div>
+          <div class="bubble-actions">
+            <button class="bubble-action-btn" onclick="copyBubbleText(this)" title="Copy">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            </button>
+            <span class="message-time">${time}</span>
+          </div>
+        </div>
+      `;
+      messageStream.appendChild(group);
+      messageStream.scrollTop = messageStream.scrollHeight;
+    }
+
+    function appendBotMessage(html) {
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const group = document.createElement('div');
+      group.className = 'message-group bot';
+      group.innerHTML = `
+        <div class="bubble-wrapper">
+          <div class="message-bubble">${html}</div>
+          <div class="bubble-actions">
+            <button class="bubble-action-btn" onclick="copyBubbleText(this)" title="Copy">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            </button>
+            <button class="bubble-action-btn" onclick="speakBubbleText(this)" title="Listen">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            </button>
+            <span class="message-time">${time}</span>
+          </div>
+        </div>
+      `;
+      messageStream.appendChild(group);
+      messageStream.scrollTop = messageStream.scrollHeight;
+      return group;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    async function handleUserSubmit() {
+      const text = chatInput.value.trim();
+      if (!text || isStreaming) return;
+
+      appendUserMessage(text);
+      chatInput.value = '';
+      sendBtn.disabled = true;
+      typingIndicator.style.display = 'inline-block';
+      isStreaming = true;
+
+      // Bottom Character: Switch to Thinking State immediately
+      setWalkerState(WALKER_STATES.THINKING);
+
+      // Start Avatar Talking state
+      avatarBox.classList.add('speaking');
+      triggerAvatarReaction('smile');
+
+      // Create streaming placeholder
+      const botGroup = appendBotMessage('<span class="stream-cursor"></span>');
+      const bubble = botGroup.querySelector('.message-bubble');
+      let streamedContent = '';
+
+      try {
+        const response = await fetch(`${API_BASE}/api/chat/stream`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: text,
+            thread_id: currentSessionId
+          })
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('data: ')) {
+              const jsonStr = trimmed.replace('data: ', '');
+              try {
+                const payload = JSON.parse(jsonStr);
+
+                if (payload.type === 'metadata' && payload.sentiment) {
+                  sentimentBadge.textContent = payload.sentiment;
+                  if (payload.sentiment.includes('Angry') || payload.sentiment.includes('Frustrated')) {
+                    sentimentBadge.style.color = 'var(--status-offline)';
+                  } else {
+                    sentimentBadge.style.color = 'var(--text-secondary)';
+                  }
+                }
+
+                if (payload.type === 'token' && payload.token) {
+                  // Bottom Character: Switch to Answering State on first received token
+                  if (currentWalkerState !== WALKER_STATES.ANSWERING) {
+                    setWalkerState(WALKER_STATES.ANSWERING);
+                  }
+                  streamedContent += payload.token;
+                  bubble.innerHTML = formatMarkdown(streamedContent) + '<span class="stream-cursor"></span>';
+                  messageStream.scrollTop = messageStream.scrollHeight;
+                }
+              } catch (e) { }
+            }
+          }
+        }
+
+        // Finalize
+        bubble.innerHTML = formatMarkdown(streamedContent) || "I am here and ready to discuss anything you'd like!";
+        if (isTtsEnabled) speakText(streamedContent);
+
+      } catch (err) {
+        console.warn("SSE stream unavailable, using conversational fallback:", err);
+        setWalkerState(WALKER_STATES.ANSWERING);
+        const fallbackText = await runFallbackChatReply(text);
+        const words = fallbackText.split(" ");
+        let accumulated = "";
+        for (let i = 0; i < words.length; i++) {
+          accumulated += words[i] + (i < words.length - 1 ? " " : "");
+          bubble.innerHTML = formatMarkdown(accumulated) + '<span class="stream-cursor"></span>';
+          messageStream.scrollTop = messageStream.scrollHeight;
+          await new Promise(r => setTimeout(r, 110)); // Paced response delay
+        }
+        bubble.innerHTML = formatMarkdown(fallbackText);
+        if (isTtsEnabled) speakText(fallbackText);
+      } finally {
+        avatarBox.classList.remove('speaking');
+        sendBtn.disabled = false;
+        typingIndicator.style.display = 'none';
+        isStreaming = false;
+        // Bottom Character: Switch back to main image & start 10s idle timer
+        setWalkerState(WALKER_STATES.IDLE);
+        chatInput.focus();
+      }
+    }
+
+    // Markdown Formatter (Headings, Bold, Italic, Code, Lists, Line breaks)
+    function formatMarkdown(text) {
+      if (!text) return '';
+      let out = escapeHtml(text);
+      // Headings
+      out = out.replace(/^### (.*$)/gm, '<h3 style="font-size: 0.95rem; font-weight: 700; margin: 10px 0 4px; color: var(--text-primary);">$1</h3>');
+      out = out.replace(/^#### (.*$)/gm, '<h4 style="font-size: 0.85rem; font-weight: 600; margin: 8px 0 2px; color: var(--text-secondary);">$1</h4>');
+      // Bold
+      out = out.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Italic
+      out = out.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      // Inline Code
+      out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+      // Unordered list items
+      out = out.replace(/^\s*[-*]\s+(.*)$/gm, '<li style="margin-left: 18px; margin-bottom: 2px;">$1</li>');
+      // Ordered list items
+      out = out.replace(/^\s*(\d+)\.\s+(.*)$/gm, '<li style="margin-left: 18px; margin-bottom: 2px; list-style-type: decimal;">$2</li>');
+      // Line breaks
+      out = out.replace(/\n/g, '<br>');
+      return out;
+    }
+
+    // Auto-load existing image_out.json on launch if present
+    async function loadInitialAnalysis() {
+      try {
+        const res = await fetch('image_out.json');
+        if (res.ok) {
+          const data = await res.json();
+          currentAnalysisJSON = data;
+          renderInspectionReport(data);
+          pipelineDot.className = "pipeline-indicator ready";
+          pipelineText.textContent = "Ready • Ingested image_out.json";
+          quickAnalyzeBtn.style.display = "inline-flex";
+        }
+      } catch (e) {
+        // Fallback or ignore if file access is restricted by origin
+      }
+    }
+    loadInitialAnalysis();
+
+    // Local Chat Fallback Engine (Pure Conversational Companion)
+    async function runFallbackChatReply(query) {
+      await new Promise(r => setTimeout(r, 600));
+      const q = query.toLowerCase();
+
+      if (q.includes("who are you") || q.includes("what can you do")) {
+        return "I am SKY Companion, your friendly AI conversational assistant! I love exploring topics with you, answering questions, brainstorming new ideas, and discussing whatever is on your mind. What would you like to chat about?";
+      }
+      return "I'm happy to chat about anything! Whether you'd like to explore science and technology, brainstorm creative ideas, discuss personal interests, or just have a relaxed conversation, I'm right here with you. What's on your mind?";
+    }
+
+    // Quick Suggestions
+    function sendSuggestion(promptText) {
+      chatInput.value = promptText;
+      handleUserSubmit();
+    }
+
+    // Message Bubble Action Helpers
+    function copyBubbleText(btn) {
+      const bubble = btn.closest('.bubble-wrapper').querySelector('.message-bubble');
+      if (bubble) {
+        const text = bubble.innerText;
+        navigator.clipboard.writeText(text);
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span style="font-size: 0.65rem; color: var(--status-online);">✓</span>';
+        setTimeout(() => btn.innerHTML = orig, 1500);
+      }
+    }
+
+    function speakBubbleText(btn) {
+      const bubble = btn.closest('.bubble-wrapper').querySelector('.message-bubble');
+      if (bubble) speakText(bubble.innerText);
+    }
+
+    // Reset Thread
+    newThreadBtn.addEventListener('click', () => {
+      currentSessionId = generateSessionId();
+      sessionIdBadge.textContent = currentSessionId.substring(0, 14);
+      messageStream.innerHTML = '';
+      appendBotMessage(`Started a fresh conversation session (<code>${currentSessionId.substring(0, 10)}</code>). How can I assist you now?`);
+      triggerAvatarReaction('smile');
+    });
+
+    // Export Chat History (Markdown)
+    exportChatBtn.addEventListener('click', () => {
+      const bubbles = messageStream.querySelectorAll('.message-group');
+      let markdown = `# SKY Companion Chat Log\n**Session:** ${currentSessionId}\n**Exported:** ${new Date().toLocaleString()}\n\n---\n\n`;
+      bubbles.forEach(b => {
+        const isUser = b.classList.contains('user');
+        const role = isUser ? 'User' : 'Jade (Companion)';
+        const text = b.querySelector('.message-bubble').innerText;
+        markdown += `### ${role}\n${text}\n\n`;
+      });
+      const blob = new Blob([markdown], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `chat_${currentSessionId}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Speech-to-text Voice Recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      voiceInputBtn.addEventListener('click', () => {
+        voiceInputBtn.classList.toggle('active');
+        recognition.start();
+      });
+
+      recognition.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        chatInput.value = transcript;
+        voiceInputBtn.classList.remove('active');
+        handleUserSubmit();
+      };
+
+      recognition.onerror = () => voiceInputBtn.classList.remove('active');
+      recognition.onend = () => voiceInputBtn.classList.remove('active');
+    } else {
+      voiceInputBtn.style.display = 'none';
+    }
+
+    // ========================================================
+    // 5. BOTTOM JADE ANIMATION STAGE & STATE CONTROLLER
+    // ========================================================
+    const jadeBottomStage = document.getElementById('jadeBottomStage');
+    const jadeWalker = document.getElementById('jadeWalker');
+    const jadeWalkerImg = document.getElementById('jadeWalkerImg');
+    const jadeWalkerBubble = document.getElementById('jadeWalkerBubble');
+    const jadeWalkerBubbleText = document.getElementById('jadeWalkerBubbleText');
+    const stageToggleBtn = document.getElementById('stageToggleBtn');
+    const stagePillDot = document.getElementById('stagePillDot');
+    const stageToggleLabel = document.getElementById('stageToggleLabel');
+
+    const WALKER_STATES = {
+      IDLE: 'IDLE',
+      WALKING: 'WALKING',
+      LISTENING: 'LISTENING',
+      THINKING: 'THINKING',
+      ANSWERING: 'ANSWERING'
+    };
+
+    let currentWalkerState = WALKER_STATES.IDLE;
+    let isStageActive = true;
+    let idleTimer = null;
+    let walkAnimationId = null;
+    let walkerPosX = 60;
+    let walkerDirection = 'right'; // 'right' or 'left'
+    let walkerFrameTick = 0;
+    let walkerFrameIndex = 0;
+    let walkPaceCounter = 0;
+
+    // Assets repository for bottom character
+    const walkerAssets = {
+      main: 'jade_animations/main.png',
+      thinking: 'jade_animations/thinking.png',
+      answer: 'jade_animations/answer.png',
+      left: [],
+      right: [],
+      smile: []
+    };
+
+    // Preload image frames for ultra-smooth bottom animation
+    function preloadWalkerAssets() {
+      // Cache main images
+      new Image().src = walkerAssets.main;
+      new Image().src = walkerAssets.thinking;
+      new Image().src = walkerAssets.answer;
+
+      for (let i = 1; i <= 28; i++) {
+        const num = String(i).padStart(3, '0');
+        const img = new Image();
+        img.src = `jade_animations/left/ezgif-frame-${num}-removebg-preview.png`;
+        walkerAssets.left.push(img.src);
+      }
+      for (let i = 1; i <= 28; i++) {
+        const num = String(i).padStart(3, '0');
+        const img = new Image();
+        img.src = `jade_animations/right/ezgif-frame-${num}-removebg-preview.png`;
+        walkerAssets.right.push(img.src);
+      }
+      for (let i = 1; i <= 35; i++) {
+        const num = String(i).padStart(3, '0');
+        const img = new Image();
+        img.src = `jade_animations/smile/ezgif-frame-${num}-removebg-preview.png`;
+        walkerAssets.smile.push(img.src);
+      }
+    }
+    preloadWalkerAssets();
+
+    // 10-Second Inactivity Watchdog
+    function resetIdleCountdown() {
+      if (idleTimer) clearTimeout(idleTimer);
+      if (!isStageActive) return;
+
+      idleTimer = setTimeout(() => {
+        // Trigger walk if idle and user is not currently in a question/stream cycle
+        if (currentWalkerState === WALKER_STATES.IDLE || currentWalkerState === WALKER_STATES.LISTENING) {
+          startWalking();
+        }
+      }, 10000); // 10 seconds of inactivity
+    }
+
+    // Walking movement loop
+    function startWalking() {
+      if (!isStageActive || isStreaming) return;
+      if (currentWalkerState === WALKER_STATES.THINKING || currentWalkerState === WALKER_STATES.ANSWERING) return;
+
+      currentWalkerState = WALKER_STATES.WALKING;
+      jadeWalkerBubbleText.textContent = "Jade • Exploring...";
+      walkerFrameIndex = 0;
+      walkerFrameTick = 0;
+      walkPaceCounter = 0;
+
+      if (walkAnimationId) cancelAnimationFrame(walkAnimationId);
+      walkStep();
+    }
+
+    function walkStep() {
+      if (currentWalkerState !== WALKER_STATES.WALKING || !isStageActive) return;
+
+      const minX = 20;
+      const characterWidth = jadeWalker.offsetWidth || 140;
+      const maxX = Math.max(minX, window.innerWidth - characterWidth - 20);
+      const speed = 0.75; // calm, peaceful strolling velocity
+
+      if (walkerDirection === 'right') {
+        walkerPosX += speed;
+        if (walkerPosX >= maxX) {
+          walkerPosX = maxX;
+          walkerDirection = 'left';
+        }
+      } else {
+        walkerPosX -= speed;
+        if (walkerPosX <= minX) {
+          walkerPosX = minX;
+          walkerDirection = 'right';
+        }
+      }
+
+      jadeWalker.style.left = `${walkerPosX}px`;
+
+      // Animate walking frames (every 8 animation ticks ~ 7.5 FPS for gentle, relaxed steps)
+      walkerFrameTick++;
+      if (walkerFrameTick % 8 === 0) {
+        if (walkerDirection === 'left') {
+          walkerFrameIndex = (walkerFrameIndex + 1) % walkerAssets.left.length;
+          jadeWalkerImg.src = walkerAssets.left[walkerFrameIndex];
+        } else {
+          walkerFrameIndex = (walkerFrameIndex + 1) % walkerAssets.right.length;
+          jadeWalkerImg.src = walkerAssets.right[walkerFrameIndex];
+        }
+      }
+
+      // Occasional gentle pause & smile every ~15 seconds of walking
+      walkPaceCounter++;
+      if (walkPaceCounter > 550) {
+        walkPaceCounter = 0;
+        pauseForBriefSmile();
+        return;
+      }
+
+      walkAnimationId = requestAnimationFrame(walkStep);
+    }
+
+    function pauseForBriefSmile() {
+      if (walkAnimationId) cancelAnimationFrame(walkAnimationId);
+      jadeWalkerBubbleText.textContent = "Jade • Smiling 😊";
+      let sIndex = 0;
+      const smileTimer = setInterval(() => {
+        if (currentWalkerState !== WALKER_STATES.WALKING || !isStageActive) {
+          clearInterval(smileTimer);
+          return;
+        }
+        if (sIndex < walkerAssets.smile.length) {
+          jadeWalkerImg.src = walkerAssets.smile[sIndex];
+          sIndex++;
+        } else {
+          clearInterval(smileTimer);
+          // Pick random direction next
+          walkerDirection = Math.random() > 0.5 ? 'left' : 'right';
+          jadeWalkerBubbleText.textContent = "Jade • Exploring...";
+          walkAnimationId = requestAnimationFrame(walkStep);
+        }
+      }, 115);
+    }
+
+    // Called whenever user starts asking a question or typing
+    function notifyUserAskingQuestion() {
+      if (currentWalkerState === WALKER_STATES.THINKING || currentWalkerState === WALKER_STATES.ANSWERING) return;
+
+      if (walkAnimationId) {
+        cancelAnimationFrame(walkAnimationId);
+        walkAnimationId = null;
+      }
+
+      currentWalkerState = WALKER_STATES.LISTENING;
+      jadeWalkerImg.src = walkerAssets.main;
+      jadeWalkerBubbleText.textContent = "Jade • Listening...";
+
+      // Reset the 10-second timer from the moment user is active
+      resetIdleCountdown();
+    }
+
+    // State Dispatcher
+    function setWalkerState(newState) {
+      if (walkAnimationId) {
+        cancelAnimationFrame(walkAnimationId);
+        walkAnimationId = null;
+      }
+
+      currentWalkerState = newState;
+
+      if (newState === WALKER_STATES.THINKING) {
+        if (idleTimer) clearTimeout(idleTimer);
+        jadeWalkerImg.src = walkerAssets.thinking;
+        jadeWalkerBubbleText.textContent = "Jade • Thinking...";
+      } else if (newState === WALKER_STATES.ANSWERING) {
+        if (idleTimer) clearTimeout(idleTimer);
+        jadeWalkerImg.src = walkerAssets.answer;
+        jadeWalkerBubbleText.textContent = "Jade • Answering...";
+      } else if (newState === 'COMPLETED' || newState === WALKER_STATES.IDLE) {
+        currentWalkerState = WALKER_STATES.IDLE;
+        jadeWalkerImg.src = walkerAssets.main;
+        jadeWalkerBubbleText.textContent = "Jade • Ready";
+        resetIdleCountdown();
+      }
+    }
+
+    // Interactivity: Click on Jade Walker
+    jadeWalker.addEventListener('click', () => {
+      if (currentWalkerState === WALKER_STATES.THINKING || currentWalkerState === WALKER_STATES.ANSWERING) return;
+
+      if (walkAnimationId) {
+        cancelAnimationFrame(walkAnimationId);
+        walkAnimationId = null;
+      }
+
+      let sIndex = 0;
+      jadeWalkerBubbleText.textContent = "Jade • Smiling 😊";
+      const clickSmile = setInterval(() => {
+        if (sIndex < walkerAssets.smile.length) {
+          jadeWalkerImg.src = walkerAssets.smile[sIndex];
+          sIndex++;
+        } else {
+          clearInterval(clickSmile);
+          jadeWalkerImg.src = walkerAssets.main;
+          jadeWalkerBubbleText.textContent = "Jade • Ready";
+          resetIdleCountdown();
+        }
+      }, 110);
+
+      triggerAvatarReaction('smile');
+      speakText("Hello! I am right here walking alongside you.");
+    });
+
+    // Toggle Companion Floor on/off
+    stageToggleBtn.addEventListener('click', () => {
+      isStageActive = !isStageActive;
+      if (!isStageActive) {
+        if (walkAnimationId) cancelAnimationFrame(walkAnimationId);
+        if (idleTimer) clearTimeout(idleTimer);
+        jadeWalker.style.display = 'none';
+        stagePillDot.classList.add('paused');
+        stageToggleLabel.textContent = "Companion Floor: Hidden";
+      } else {
+        jadeWalker.style.display = 'flex';
+        stagePillDot.classList.remove('paused');
+        stageToggleLabel.textContent = "Companion Floor: Active";
+        setWalkerState(WALKER_STATES.IDLE);
+      }
+    });
+
+    // Keep within window bounds on screen resize
+    window.addEventListener('resize', () => {
+      const minX = 20;
+      const characterWidth = jadeWalker.offsetWidth || 140;
+      const maxX = Math.max(minX, window.innerWidth - characterWidth - 20);
+      if (walkerPosX > maxX) {
+        walkerPosX = maxX;
+        jadeWalker.style.left = `${walkerPosX}px`;
+      }
+    });
+
+    // User activity listeners on chat input
+    chatInput.addEventListener('input', notifyUserAskingQuestion);
+    chatInput.addEventListener('focus', notifyUserAskingQuestion);
+
+    // Initial countdown start
+    resetIdleCountdown();
+
+    // Event Listeners for Input & Shortcuts
+    sendBtn.addEventListener('click', handleUserSubmit);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleUserSubmit();
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        chatInput.focus();
+      }
+    });
+  </script>
+</body>
+
+</html>
